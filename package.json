@@ -1,0 +1,28 @@
+{
+  "name": "snake-game",
+  "version": "1.0.0",
+  "description": "A simple snake game using Node.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "concurrently \"npm run tsc:watch\" \"npm run live\"",
+    "tsc:watch": "tsc --watch --outDir public",
+    "live": "live-server public --no-browser"
+  },
+  "keywords": [
+    "game",
+    "snake",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "live-server": "^1.2.2",
+    "nodemon": "^3.1.11",
+    "typescript": "^5.9.3"
+  }
+}
