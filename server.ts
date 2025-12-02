@@ -45,6 +45,8 @@ app.get('/api/top-scores', async (req, res) => {
 // Game instances per socket
 const games = new Map<string, SnakeGameServer>();
 const userData = new Map<string, { name: string; highScore: number }>();
+// Track score updates to batch database operations
+const scoreUpdates = new Map<string, { username: string; score: number; timestamp: number }>();
 
 interface GameState {
     snake: { x: number; y: number }[];
@@ -136,8 +138,9 @@ io.on('connection', (socket: Socket) => {
     });
 });
 
-// Game loop running on server
+// Game loop running on server - optimized with batched updates
 setInterval(async () => {
+    // Update game states
     for (const [socketId, game] of games) {
         game.gameLoop();
         const socket = io.sockets.sockets.get(socketId);
@@ -148,19 +151,41 @@ setInterval(async () => {
             const fullState = { ...state, highScore };
             socket.emit('gameState', fullState);
 
-
-            // Update high score if necessary
+            // Batch high score updates: only update if score changed significantly
             if (data && state.score > data.highScore) {
-                data.highScore = state.score;
-                try {
-                    await prisma.user.update({
-                        where: { username: data.name },
-                        data: { highScore: state.score },
-                    });
-                } catch (error) {
-                    logger.error({ error, socketId: socket.id }, 'Error updating high score');
+                const updateKey = socketId;
+                const lastUpdate = scoreUpdates.get(updateKey);
+                const now = Date.now();
+                
+                // Update in batches every 2 seconds or on significant score jumps
+                if (!lastUpdate || now - lastUpdate.timestamp > 2000 || state.score - lastUpdate.score > 50) {
+                    scoreUpdates.set(updateKey, { username: data.name, score: state.score, timestamp: now });
                 }
             }
+        }
+    }
+
+    // Batch database operations every 2 seconds
+    if (scoreUpdates.size > 0) {
+        const updates = Array.from(scoreUpdates.values());
+        scoreUpdates.clear();
+        
+        // Execute all updates in parallel
+        try {
+            await Promise.all(
+                updates.map(update =>
+                    prisma.user.update({
+                        where: { username: update.username },
+                        data: { highScore: update.score },
+                    })
+                )
+            );
+        } catch (error) {
+            logger.error({ error }, 'Batch score update failed');
+            // Re-add failed updates for retry
+            updates.forEach(u => {
+                scoreUpdates.set(u.username, { ...u, timestamp: Date.now() });
+            });
         }
     }
 }, 100); // 100ms interval like client

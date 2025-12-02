@@ -7,13 +7,15 @@
   "scripts": {
     "start": "node build/server.js",
     "dev": "NODE_ENV=development node build/server.js",
-    "build": "tsc --skipLibCheck && webpack",
-    "build:prod": "npm run build && mkdir -p dist && cp -r build/*.js public/* dist/ && cp package.prod.json dist/package.json",
+    "build": "npx tsc --skipLibCheck && webpack",
+    "build:prod": "npm run prisma:generate && npm run build && mkdir -p dist && cp -r build/*.js public/* dist/ && cp package.prod.json dist/package.json",
     "start:prod": "NODE_ENV=production node dist/server.js",
-    "dev:watch": "concurrently \"npm run tsc:watch\" \"webpack --watch\" \"npm run live\"",
-    "tsc:watch": "tsc --watch",
+    "dev:watch": "concurrently \"npx tsc:watch\" \"webpack --watch\" \"npm run live\"",
+    "tsc:watch": "npx tsc --watch",
     "webpack:watch": "webpack --watch",
-    "live": "live-server public --no-browser"
+    "live": "live-server public --no-browser",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy"
   },
   "keywords": [
     "game",

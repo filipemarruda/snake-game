@@ -7,6 +7,9 @@
 class SnakeGameClient {
     constructor() {
         this.pauseDebounce = false;
+        // Optimistic prediction
+        this.lastLocalState = null;
+        this.inputBuffer = [];
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
         // Set canvas size
@@ -32,6 +35,10 @@ class SnakeGameClient {
         this.downBtn = document.getElementById('downBtn');
         this.leftBtn = document.getElementById('leftBtn');
         this.rightBtn = document.getElementById('rightBtn');
+        this.upLeftBtn = document.getElementById('upLeftBtn');
+        this.upRightBtn = document.getElementById('upRightBtn');
+        this.downLeftBtn = document.getElementById('downLeftBtn');
+        this.downRightBtn = document.getElementById('downRightBtn');
         // Set up event listeners once
         this.setupEventListeners();
         // Load user name
@@ -75,6 +82,8 @@ class SnakeGameClient {
     }
     setupSocketListeners() {
         this.socket.on('gameState', (state) => {
+            this.lastLocalState = state;
+            this.inputBuffer = [];
             this.render(state);
         });
     }
@@ -106,21 +115,54 @@ class SnakeGameClient {
         });
         // Joystick buttons
         this.upBtn.addEventListener('click', () => {
+            this.inputBuffer.push({ direction: 'up', timestamp: Date.now() });
             this.socket.emit('changeDirection', 'up');
             this.upBtn.blur();
         });
         this.downBtn.addEventListener('click', () => {
+            this.inputBuffer.push({ direction: 'down', timestamp: Date.now() });
             this.socket.emit('changeDirection', 'down');
             this.downBtn.blur();
         });
         this.leftBtn.addEventListener('click', () => {
+            this.inputBuffer.push({ direction: 'left', timestamp: Date.now() });
             this.socket.emit('changeDirection', 'left');
             this.leftBtn.blur();
         });
         this.rightBtn.addEventListener('click', () => {
+            this.inputBuffer.push({ direction: 'right', timestamp: Date.now() });
             this.socket.emit('changeDirection', 'right');
             this.rightBtn.blur();
         });
+        // Diagonal buttons - smart direction selection
+        this.upLeftBtn.addEventListener('click', () => {
+            this.handleDiagonalDirection('up', 'left');
+            this.upLeftBtn.blur();
+        });
+        this.upRightBtn.addEventListener('click', () => {
+            this.handleDiagonalDirection('up', 'right');
+            this.upRightBtn.blur();
+        });
+        this.downLeftBtn.addEventListener('click', () => {
+            this.handleDiagonalDirection('down', 'left');
+            this.downLeftBtn.blur();
+        });
+        this.downRightBtn.addEventListener('click', () => {
+            this.handleDiagonalDirection('down', 'right');
+            this.downRightBtn.blur();
+        });
+    }
+    handleDiagonalDirection(vertical, horizontal) {
+        // Smart logic: if moving horizontally, turn vertical; if moving vertically, turn horizontal
+        if (this.lastLocalState && this.lastLocalState.snake && this.lastLocalState.snake.length > 1) {
+            const head = this.lastLocalState.snake[0];
+            const neck = this.lastLocalState.snake[1];
+            const isMovingHorizontally = head.x !== neck.x;
+            const isMovingVertically = head.y !== neck.y;
+            const direction = isMovingHorizontally ? vertical : horizontal;
+            this.inputBuffer.push({ direction, timestamp: Date.now() });
+            this.socket.emit('changeDirection', direction);
+        }
     }
     switchUser() {
         // Reload the page for a complete clean slate
@@ -156,6 +198,8 @@ class SnakeGameClient {
                 break;
         }
         if (direction) {
+            // Immediate feedback: track input locally
+            this.inputBuffer.push({ direction, timestamp: Date.now() });
             this.socket.emit('changeDirection', direction);
         }
     }
