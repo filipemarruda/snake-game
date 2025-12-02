@@ -188,7 +188,7 @@ setInterval(async () => {
             });
         }
     }
-}, 100); // 100ms interval like client
+}, 150); // 150ms interval - slower game speed for better mobile gameplay
 
 // Start server
 server.listen(port, () => {

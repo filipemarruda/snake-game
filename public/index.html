@@ -2,45 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Snake Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body ontouchstart="">
     <div class="game-container">
         <div class="game-header">
             <h1>Snake Game</h1>
             <div class="user-info">
-                <span id="userName">Player</span>
-                <button id="switchUserBtn">Switch User</button>
+                <button id="switchUserBtn"><span id="userName">Player</span></button>
             </div>
-            <div class="score-container">
-                Score: <span id="score">0</span>
-                High Score: <span id="highScore">0</span>
-            </div>
+            <div class="score-container">Score: <span id="score">0</span> | High Score: <span id="highScore">0</span></div>
         </div>
         <canvas id="gameCanvas"></canvas>
-        <div class="controls">
-            <button id="startBtn">Start Game</button>
-            <button id="pauseBtn">Pause</button>
-            <button id="topScoresBtn">Top Scores</button>
-        </div>
-        <div class="joystick-container">
-            <div class="joystick-row">
+        <div class="joystick-wrapper">
+            <div class="joystick-container">
                 <button class="joystick-btn joystick-diagonal" id="upLeftBtn" aria-label="Up-Left"><span class="icon" style="transform: rotate(-45deg);">▲</span></button>
                 <button class="joystick-btn joystick-up" id="upBtn" aria-label="Up">▲</button>
                 <button class="joystick-btn joystick-diagonal" id="upRightBtn" aria-label="Up-Right"><span class="icon" style="transform: rotate(45deg);">▲</span></button>
-            </div>
-            <div class="joystick-middle">
                 <button class="joystick-btn joystick-left" id="leftBtn" aria-label="Left">◄</button>
                 <button class="joystick-btn joystick-center" id="centerBtn" disabled>•</button>
                 <button class="joystick-btn joystick-right" id="rightBtn" aria-label="Right">►</button>
-            </div>
-            <div class="joystick-row">
                 <button class="joystick-btn joystick-diagonal" id="downLeftBtn" aria-label="Down-Left"><span class="icon" style="transform: rotate(-135deg);">▲</span></button>
                 <button class="joystick-btn joystick-down" id="downBtn" aria-label="Down">▼</button>
                 <button class="joystick-btn joystick-diagonal" id="downRightBtn" aria-label="Down-Right"><span class="icon" style="transform: rotate(135deg);">▲</span></button>
             </div>
+        </div>
+        <div class="controls">
+            <button id="startBtn">Start Game</button>
+            <button id="pauseBtn">Pause</button>
+            <button id="topScoresBtn">Top Scores</button>
         </div>
     </div>
 
