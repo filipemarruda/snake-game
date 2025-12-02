@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
+    "target": "es2020",
+    "module": "es2020",
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "outDir": "./public"
+    "outDir": "./build",
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["public/*.ts"],
+  "include": ["public/*.ts", "server.ts", "gameServer.ts"],
   "exclude": []
 }

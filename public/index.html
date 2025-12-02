@@ -10,6 +10,10 @@
     <div class="game-container">
         <div class="game-header">
             <h1>Snake Game</h1>
+            <div class="user-info">
+                <span id="userName">Player</span>
+                <button id="switchUserBtn">Switch User</button>
+            </div>
             <div class="score-container">
                 Score: <span id="score">0</span>
                 High Score: <span id="highScore">0</span>
@@ -19,12 +23,39 @@
         <div class="controls">
             <button id="startBtn">Start Game</button>
             <button id="pauseBtn">Pause</button>
+            <button id="topScoresBtn">Top Scores</button>
+        </div>
+        <div class="joystick-container">
+            <button class="joystick-btn joystick-up" id="upBtn" aria-label="Up">▲</button>
+            <div class="joystick-middle">
+                <button class="joystick-btn joystick-left" id="leftBtn" aria-label="Left">◄</button>
+                <button class="joystick-btn joystick-center" id="centerBtn" disabled>•</button>
+                <button class="joystick-btn joystick-right" id="rightBtn" aria-label="Right">►</button>
+            </div>
+            <button class="joystick-btn joystick-down" id="downBtn" aria-label="Down">▼</button>
         </div>
         <div class="instructions">
-            <p>Use arrow keys to control the snake</p>
-            <p>Eat the food to grow and earn points</p>
+            <p>Use arrow keys or buttons to control the snake</p>
+            <p>Press Space or Pause button to toggle pause</p>
         </div>
     </div>
+
+    <!-- Name Input Modal -->
+    <div id="nameModal" class="modal">
+        <div class="modal-content">
+            <h2>Enter Your Name</h2>
+            <input type="text" id="nameInput" placeholder="Your name" maxlength="20">
+            <button id="submitNameBtn">Start Playing</button>
+        </div>
+    </div>
+    <div id="topScoresModal" class="modal">
+        <div class="modal-content">
+            <h2>Top 10 Scores</h2>
+            <div id="scoresList"></div>
+            <button id="closeScoresBtn">Close</button>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="game.js"></script>
 </body>
 </html>

@@ -1,12 +1,18 @@
 {
   "name": "snake-game",
   "version": "1.0.0",
+  "type": "module",
   "description": "A simple snake game using Node.js",
-  "main": "server.js",
+  "main": "build/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "concurrently \"npm run tsc:watch\" \"npm run live\"",
-    "tsc:watch": "tsc --watch --outDir public",
+    "start": "node build/server.js",
+    "dev": "NODE_ENV=development node build/server.js",
+    "build": "tsc --skipLibCheck && webpack",
+    "build:prod": "npm run build && mkdir -p dist && cp -r build/*.js public/* dist/ && cp package.prod.json dist/package.json",
+    "start:prod": "NODE_ENV=production node dist/server.js",
+    "dev:watch": "concurrently \"npm run tsc:watch\" \"webpack --watch\" \"npm run live\"",
+    "tsc:watch": "tsc --watch",
+    "webpack:watch": "webpack --watch",
     "live": "live-server public --no-browser"
   },
   "keywords": [
@@ -17,12 +23,25 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "@prisma/client": "^5.22.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "mysql2": "^3.15.3",
+    "pino": "^10.1.0",
+    "pino-pretty": "^13.1.3",
+    "prisma": "^5.22.0",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
     "concurrently": "^8.2.2",
     "live-server": "^1.2.2",
     "nodemon": "^3.1.11",
-    "typescript": "^5.9.3"
+    "onchange": "^7.1.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.103.0",
+    "webpack-cli": "^6.0.1"
   }
 }
